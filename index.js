@@ -199,7 +199,19 @@ const Exponent = function() {
     const selector = this.getSelector(this.settings.uiSelector);
     const children = this.findChildrenElements(selector, element, childrenComponents);
 
-    children.forEach(el => ( ui[el.dataset[this.settings.uiSelector]] = el ) );
+    children.forEach(el => {
+      const uiElement = ui[el.dataset[this.settings.uiSelector]];
+
+      if (!uiElement) {
+        ui[el.dataset[this.settings.uiSelector]] = el;
+      } else {
+        if (length in uiElement) {
+          ui[el.dataset[this.settings.uiSelector]].push(el);
+        } else {
+          ui[el.dataset[this.settings.uiSelector]] = [ uiElement, el ]; // create new array
+        }
+      }
+    });
 
     return ui;
   }
@@ -209,7 +221,19 @@ const Exponent = function() {
     const selector = this.getSelector(this.settings.controlSelector);
     const children = this.findChildrenElements(selector, element, childrenComponents);
 
-    children.forEach(el => ( controls[el.dataset[this.settings.controlSelector]] = el ) );
+    children.forEach(el => {
+      const controlElement = controls[el.dataset[this.settings.controlSelector]];
+
+      if (!controlElement) {
+        controls[el.dataset[this.settings.controlSelector]] = el;
+      } else {
+        if (length in controlElement) {
+          controls[el.dataset[this.settings.controlSelector]].push(el);
+        } else {
+          controls[el.dataset[this.settings.controlSelector]] = [ controlElement, el ]; // create new array
+        }
+      }
+    });
 
     return controls;
   }
