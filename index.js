@@ -190,7 +190,9 @@ const Exponent = function() {
 
       childrenComponents.forEach(childComponent => {
         if ( childComponent.contains(childElement) ) {
-          isNested = true;
+          isNested = childComponent === childElement
+            ? false // todo: the element is also a component, it should be fine: see if this works with other nesting contexts
+            : true;
         }
       });
 
