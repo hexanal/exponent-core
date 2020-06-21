@@ -1,10 +1,10 @@
 {
   "name": "exponent-core",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "hello": "echo \"hey there, how's it going?\""
   },
   "repository": {
     "type": "git",

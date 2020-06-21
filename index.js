@@ -43,7 +43,10 @@ const Exponent = function() {
     components.map(c => {
       const { Component, props } = this.withMiddlewares(c);
 
-      return Component(props); // augment with middlewares
+      return Component({
+        ...props, // augmented with middlewares
+        _exponent: this, // pass along the whole App, why the heck not?
+      });
     });
 
     return this;
@@ -66,15 +69,26 @@ const Exponent = function() {
     return this;
   }
 
+  this.unmount = function() {
+    this.mounted.map(component => {
+      // to unmount an Exponent, we just call it! A component must return whatever is needed to "flush" itself
+      if (typeof component === 'function') {
+        component();
+      }
+    });
+    this.mounted = [];
+  }
+
   this.handleComponentMount = (element) => {
     if (!element.dataset) return;
 
     const attr = element.dataset[this.settings.componentSelector];
+
+    if (!attr) return;
+
     const componentIds = attr.split(',').map(str => str.trim() );
 
     if (!componentIds.length) return;
-
-    element.dataset.status = 'loading';
 
     const instances = componentIds.map(id => {
       const Component = this.registry[id];
@@ -86,10 +100,6 @@ const Exponent = function() {
     return instances;
   }
 
-  this.unmountComponents = function() {
-    this.mounted.map( unmount => unmount() );
-    this.mounted = [];
-  }
 
   this.mountComponentOnElement = (componentFn, id, element) => {
     const { uiSelector, controlSelector } = this.settings;
@@ -110,8 +120,6 @@ const Exponent = function() {
     const ComponentInstance = Component(props);
 
     this.mounted.push( ComponentInstance );
-
-    element.dataset.status = 'loaded';
 
     return ComponentInstance;
   }
