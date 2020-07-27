@@ -70,13 +70,17 @@ const Exponent = function() {
   }
 
   this.unmount = function() {
-    this.mounted.map(component => {
+    this.mounted.map(({ component }) => {
       // to unmount an Exponent, we just call it! A component must return whatever is needed to "flush" itself
       if (typeof component === 'function') {
         component();
       }
     });
     this.mounted = [];
+  }
+
+  this.getComponent = function(element) {
+    return this.mounted.find(component => component.element === element);
   }
 
   this.handleComponentMount = (element) => {
@@ -119,7 +123,10 @@ const Exponent = function() {
     const { Component, props } = this.withMiddlewares(componentFn, defaultProps);
     const ComponentInstance = Component(props);
 
-    this.mounted.push( ComponentInstance );
+    this.mounted.push({
+      element,
+      component: ComponentInstance
+    });
 
     return ComponentInstance;
   }
@@ -131,6 +138,7 @@ const Exponent = function() {
     directChildren.forEach(child => {
       const ComponentInstances = this.handleComponentMount(child);
       children = children.concat( ComponentInstances );
+      console.log( children );
     });
 
     return children;
